@@ -1,23 +1,21 @@
-from aiogram.utils import executor
-import filters
-import middlewares
-from handlers import dp
-from utils import on_startup_notify
-from utils.set_bot_commands import set_default_commands
-from utils.work_with_db import SQLite
+from aiogram import executor, Dispatcher
 
-db = SQLite()
+from tgbot.data.config import get_admins
+from tgbot.middlewares import setup_middlewares
+from tgbot.handlers import dp
+from tgbot.utils.misc.bot_commands import set_commands
+from tgbot.utils.misc_functions import on_startup_notify
 
 
-async def on_startup(dp):
-    filters.setup(dp)
-    middlewares.setup(dp)
+async def on_startup(dp: Dispatcher):
 
-    await set_default_commands(dp)
+    await set_commands(dp)
     await on_startup_notify(dp)
+    # bot_logger.warning("BOT WAS STARTED")
     print("~~~~~ Bot was started ~~~~~")
+    print("***** ENTER ADMIN ID *****") if len(get_admins()) == 0 else print(f"***** ADMINS: {len(get_admins())} *****")
 
 
 if __name__ == '__main__':
-    db.create_subsribtions()
+    setup_middlewares(dp)
     executor.start_polling(dp, on_startup=on_startup)
