@@ -1,21 +1,23 @@
-from aiogram import executor, Dispatcher
+import asyncio
 
-from tgbot.data.config import get_admins
-from tgbot.middlewares import setup_middlewares
-from tgbot.handlers import dp
-from tgbot.utils.misc.bot_commands import set_commands
-from tgbot.utils.misc_functions import on_startup_notify
+from aiogram import Dispatcher, Bot
+
+from tgbot.data.config import get_admins, BOT_TOKEN
+from tgbot.database.models import Base
+from tgbot.database.queries import engine
+from tgbot.handlers import register_all_routers
 
 
-async def on_startup(dp: Dispatcher):
-
-    await set_commands(dp)
-    await on_startup_notify(dp)
-    # bot_logger.warning("BOT WAS STARTED")
+async def main():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    dp = Dispatcher()
+    bot = Bot(token=BOT_TOKEN)
+    register_all_routers(dp)
     print("~~~~~ Bot was started ~~~~~")
     print("***** ENTER ADMIN ID *****") if len(get_admins()) == 0 else print(f"***** ADMINS: {len(get_admins())} *****")
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
-    setup_middlewares(dp)
-    executor.start_polling(dp, on_startup=on_startup)
+    asyncio.run(main())

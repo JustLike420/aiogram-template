@@ -1,7 +1,12 @@
-from .admin_functions import dp
-from .admin_menu import dp
-from .main_start import dp
-from .user_menu import dp
-from .missed import dp
+from aiogram import Dispatcher
 
-__all__ = ["dp"]
+from tgbot.handlers.admin import admin_menu
+from tgbot.handlers.user import main_start, user_test
+
+
+def register_all_routers(dp: Dispatcher):
+    admin_menu.router.message.filter()
+
+    dp.include_router(admin_menu.router)
+    dp.include_router(main_start.router)
+    dp.include_router(user_test.router)

@@ -1,14 +1,26 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton as ikb
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from ..utils.callback_data.admin import AdminTest
+from ..utils.callback_data.user import MainMenu
 
 
-def some_admin_func(some):
-    keyboard = InlineKeyboardMarkup(
+def admin_menu_keyboard() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+    keyboard.button(text="🔎 Поиск пользователя", callback_data=AdminTest())
+    keyboard.button(text="⬅️ Назад", callback_data=MainMenu())
+    keyboard.adjust(1)
+    return keyboard.as_markup()
 
-    ).add(
-        ikb(text="test1", callback_data=f"show_purchases:{some}"),
-        ikb(text="test2", callback_data=f"add_balance:{some}")
-    ).add(
-        ikb(text="test3", callback_data=f"skip_purchases:{some}"),
-        ikb(text="test4", callback_data=f"delete_balance:{some}")
-    )
-    return keyboard
+# def admin_menu_keyboard() -> InlineKeyboardMarkup:
+#     keyboard = InlineKeyboardBuilder()
+#
+#     keyboard.row(
+#         InlineKeyboardButton(text="🔎 Поиск пользователя", callback_data=GetAdminUser()),
+#         InlineKeyboardButton(text="✉️ Создать рассылку", callback_data=AdminCreateNewsletter())
+#     ).row(
+#         InlineKeyboardButton(text="📅 Мероприятия", callback_data=AdminEvent())
+#     ).row(
+#         InlineKeyboardButton(text="⬅️ Назад", callback_data=MainMenu())
+#     )
+#
+#     return keyboard.as_markup()
